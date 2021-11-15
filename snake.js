@@ -1,9 +1,9 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
-var WIDTH = 16;
-var HEIGHT = 16;
+var WIDTH = 32;
+var HEIGHT = 32;
 var cellSize = canvas.width/WIDTH;
-var speed = 250;
+var speed = 175;
 var score = 0;
 
 var startX = 8;
@@ -14,6 +14,8 @@ var foodY = 8;
 var dx = 1;
 var dy = 0;
 
+var direction = 1;
+var prevDirection = 1;
 let snake = [
     {x: startX, y: startY},
     {x: startX - 1, y: startY},
@@ -24,7 +26,7 @@ document.addEventListener("keydown", change_direction);
 main();
 
 function main(){
-    document.getElementById('score').innerHTML = (score);
+    document.getElementById('score').innerHTML = ("score: " +  score);
 
 
     if(checkGameOver()) return;
@@ -33,6 +35,8 @@ function main(){
     moveSnake();
     drawSnake();
     drawFood();
+
+    prevDirection = direction;
     // Call main again
     main();
   }, speed)
@@ -77,40 +81,45 @@ function clearCanvas(){
 
 function change_direction(event) 
 {  
-   const LEFT_KEY = 37;
-   const RIGHT_KEY = 39;
-   const UP_KEY = 38;
-   const DOWN_KEY = 40;
+    const LEFT_KEY = 37;
+    const RIGHT_KEY = 39;
+    const UP_KEY = 38;
+    const DOWN_KEY = 40;
  
-   const keyPressed = event.keyCode;
-   const goingUp = dy == -1;
-   const goingDown = dy == 1;
-   const goingRight = dx == 1;  
-   const goingLeft = dx == -1;
+    const keyPressed = event.keyCode;
+    const goingLeft = prevDirection == 0;
+    const goingRight = prevDirection == 1;  
+    const goingUp = prevDirection == 2;
+    const goingDown = prevDirection == 3;
  
-     if (keyPressed == LEFT_KEY && !goingRight)
-     {    
-          dx = -1;
-          dy = 0;  
-     }
- 
-     if (keyPressed == UP_KEY && !goingDown)
-     {    
-          dx = 0;
-          dy = -1;
-     }
- 
-     if (keyPressed == RIGHT_KEY && !goingLeft)
-     {    
-          dx = 1;
-          dy = 0;
-     }
- 
-     if (keyPressed == DOWN_KEY && !goingUp)
-     {    
-          dx = 0;
-          dy = 1;
-     }
+    //change velocity variables and update prevdirection;
+    if (keyPressed == LEFT_KEY && !goingRight)
+    {    
+        dx = -1;
+        dy = 0;  
+        direction = 0;
+    }
+    
+    
+    if (keyPressed == RIGHT_KEY && !goingLeft)
+    {    
+        dx = 1;
+        dy = 0;
+        direction = 1;
+    }
+    if (keyPressed == UP_KEY && !goingDown)
+    {    
+        dx = 0;
+        dy = -1;
+        direction = 2;
+    }
+    
+    if (keyPressed == DOWN_KEY && !goingUp)
+    {    
+        dx = 0;
+        dy = 1;
+        direction = 3;
+    }
 }
 
 function checkGameOver() {
